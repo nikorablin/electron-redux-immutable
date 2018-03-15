@@ -1,2 +1,4 @@
 # Electron Redux Immutable
-Redux middleware to share a store between renderer and main processes
+A redux middleware that allows you to share an immutable redux store across your electron processes using IPC to send and receive actions
+
+Work in progress
