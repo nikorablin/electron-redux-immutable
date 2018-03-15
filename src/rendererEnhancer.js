@@ -1,10 +1,13 @@
 import { remote, ipcRenderer } from 'electron';
-import { convertStateToImmutable } from './immutableHelper';
+import immutableTransformer from './immutableHelper';
 
-const rendererEnhancer = () => storeCreator => (reducer, initialState, enhancer) => {
+const rendererEnhancer = options => storeCreator => (reducer, initialState, enhancer) => {
   ipcRenderer.send('client--registered');
   const getReduxState = remote.getGlobal('getReduxState');
-  const state = convertStateToImmutable(JSON.parse(getReduxState()));
+
+  const transformer = options.transform || immutableTransformer;
+
+  const state = transformer.inbound(JSON.parse(getReduxState()));
   const store = storeCreator(reducer, state, enhancer);
 
   const { dispatch } = store;
@@ -15,6 +18,11 @@ const rendererEnhancer = () => storeCreator => (reducer, initialState, enhancer)
     }
     return dispatch(action);
   };
+
+  ipcRenderer.on('main--dispatch', (event, actionJSON) => {
+    const action = JSON.parse(actionJSON);
+    store.dispatch({ ...action, forwarded: true });
+  });
 
   return store;
 };

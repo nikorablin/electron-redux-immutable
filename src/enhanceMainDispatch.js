@@ -1,8 +1,9 @@
 import { ipcMain } from 'electron';
 import { covertImmutableStateToJS } from './immutableHelper';
 
-export const enhanceMainDispatch = store => {
-  global.getReduxState = () => JSON.stringify(covertImmutableStateToJS(global.state));
+export const enhanceMainDispatch = (store, options = {}) => {
+  const transform = options.transform || covertImmutableStateToJS;
+  global.getReduxState = () => JSON.stringify(transform(global.state));
 
   ipcMain.on('renderer--dispatch', (event, actionJSON) => {
     const action = JSON.parse(actionJSON);

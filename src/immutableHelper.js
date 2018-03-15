@@ -19,3 +19,10 @@ export const covertImmutableStateToJS = state => {
     return map;
   }, {});
 };
+
+const helpers = {
+  inbound: convertStateToImmutable,
+  outbound: covertImmutableStateToJS
+};
+
+export default helpers;
