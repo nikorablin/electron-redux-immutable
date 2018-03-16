@@ -1,13 +1,13 @@
-import { remote, ipcRenderer } from 'electron';
-import immutableTransformer from './immutableHelper';
+const { remote, ipcRenderer } = require('electron');
+const immutableTransformer = require('./immutableHelper');
 
-const rendererEnhancer = options => storeCreator => (reducer, initialState, enhancer) => {
+module.exports = options => storeCreator => (reducer, initialState, enhancer) => {
   ipcRenderer.send('client--registered');
   const getReduxState = remote.getGlobal('getReduxState');
 
   const transformer = options.transform || immutableTransformer;
 
-  const state = transformer.inbound(JSON.parse(getReduxState()));
+  const state = transformer.inbound(JSON.parse(getReduxState()), options.types);
   const store = storeCreator(reducer, state, enhancer);
 
   const { dispatch } = store;
@@ -26,5 +26,3 @@ const rendererEnhancer = options => storeCreator => (reducer, initialState, enha
 
   return store;
 };
-
-export default rendererEnhancer;

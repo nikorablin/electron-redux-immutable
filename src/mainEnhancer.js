@@ -1,7 +1,7 @@
-import { ipcMain } from 'electron';
-import immutableTransformer from './immutableHelper';
+const { ipcMain } = require('electron');
+const immutableTransformer = require('./immutableHelper');
 
-const mainEnhancer = options => storeCreator => (reducer, initialState, enhancer) => {
+module.exports = options => storeCreator => (reducer, initialState, enhancer) => {
   let clients = [];
   const store = storeCreator(reducer, initialState, enhancer);
   const { dispatch } = store;
@@ -47,7 +47,7 @@ const mainEnhancer = options => storeCreator => (reducer, initialState, enhancer
     });
 
   const transformer = options.transform || immutableTransformer;
-  global.getReduxState = () => JSON.stringify(transformer.outbound(global.state));
+  global.getReduxState = () => JSON.stringify(transformer.outbound(global.state, options.types));
 
   ipcMain.on('renderer--dispatch', (event, actionJSON) => {
     const action = JSON.parse(actionJSON);
@@ -56,5 +56,3 @@ const mainEnhancer = options => storeCreator => (reducer, initialState, enhancer
 
   return store;
 };
-
-export default mainEnhancer;

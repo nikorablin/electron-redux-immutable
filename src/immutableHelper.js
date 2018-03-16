@@ -1,4 +1,4 @@
-import { fromJS } from 'immutable';
+const { fromJS } = require('immutable');
 
 export const convertStateToImmutable = state => {
   if (state === undefined) {
@@ -20,9 +20,7 @@ export const covertImmutableStateToJS = state => {
   }, {});
 };
 
-const helpers = {
+module.exports = {
   inbound: convertStateToImmutable,
   outbound: covertImmutableStateToJS
 };
-
-export default helpers;

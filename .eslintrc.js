@@ -1,11 +1,12 @@
 module.exports = {
-  parser: 'babel-eslint',
+  "parser": "babel-eslint",
   extends: ['airbnb', 'prettier'],
   plugins: ['prettier'],
   rules: {
     'comma-dangle': ['error', 'never'],
     'prettier/prettier': 'error',
-    'no-param-reassign': 'off'
+    'no-param-reassign': 'off',
+    'import/no-extraneous-dependencies': ["error", {"devDependencies": true}]
   },
   env: {
     browser: true,
